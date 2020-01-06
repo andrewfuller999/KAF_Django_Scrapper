@@ -1,3 +1,15 @@
+###############################################################################
+# File: TestSelenium.py                                                       #
+# Author: Andrew Fuller                                                       #
+# Description: Python script for scraping MBMS data from KAF Django panel     #
+# using Selenium.                                                             #
+###############################################################################
+
+__author__ = 'andrewfuller999'
+
+#######################
+# Import used modules #
+#######################
 import os.path
 import glob
 from time import sleep
