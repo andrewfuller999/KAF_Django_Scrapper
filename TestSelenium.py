@@ -63,34 +63,45 @@ cap['marionette'] = False
 #########################################################################
 driver = webdriver.Firefox(capabilities=cap, firefox_profile=fp)
 
+#########################
+# Login to Django panel #
+#########################
 driver.get(login_url)
 wait = WebDriverWait(driver, 10)
 
-# enter the email
+# enter the login email
 email = wait.until(EC.presence_of_element_located((By.XPATH, "//input[@name='username']")))
 email.send_keys(login_email)
 
-# enter password
+# enter the login password
 driver.find_element_by_xpath("//input[@name='password']").send_keys(login_pw)
 
 # get the token from google authenticator
 totp = TOTP(login_otp_token)
 token = totp.now()
-print(token)
-# enter otp token
+
+# enter the otp token
 driver.find_element_by_xpath("//input[@name='otp_token']").send_keys(token)
 
-# click on the sybmit button to complete 2FA
+# click on the submit button to complete 2FA
 driver.find_element_by_xpath("//input[@value='Log in']").click()
 
+#######################################################################
+# Navigate to the require data export page and initiate data download #
+#######################################################################
 driver.get(django_export_data_url)
 wait = WebDriverWait(driver, 10)
 
-# click on the sybmit button to complete 2FA
-print('Downloading file')
+# Select the required export file format to be CSV
 driver.find_element_by_xpath("//select[@name='file_format']/option[text()='csv']").click()
+
+# Click on the submit button to initiate data download
+print('Downloading file')
 driver.find_element_by_xpath("//input[@value='Submit']").click()
 
+#######################################
+# Wait for the file to fully download #
+#######################################
 while True:
     if glob.glob("/Users/andrewfuller999/Dropbox/KAF/Django_Downloads/Staging/MBMS/*.csv.part"):
         print('Waiting for file download 1')
@@ -101,4 +112,7 @@ while True:
         print('Waiting for file download 2')
         sleep(1)
 
+####################
+# Quit the browser #
+####################
 driver.quit()
